@@ -1,0 +1,12 @@
+bitsandbytes ; sys_platform != 'win32'
+bitsandbytes-windows ; sys_platform == 'win32'
+accelerate
+llama-index-vector-stores-chroma
+llama-index-llms-huggingface
+llama-index-embeddings-instructor
+sentence-transformers
+llama-index-embeddings-huggingface
+llama-index-readers-file
+llama-index
+fastapi
+uvicorn

@@ -1,0 +1,166 @@
+version: '3'
+services:
+  server:
+    build:
+      context: ./backend/server # Path to the directory containing the Python app
+      dockerfile: Dockerfile # Specify the Python Dockerfile
+    environment:
+      - mongo_ip=${mongo_ip}
+      - mongo_port=${mongo_port}
+      - AIServicesIp=${AIServicesIp}
+    ports:
+      - "4001:4001" # Map the container's port 4001 to the host's port 4001
+    volumes:
+      - ./backend/server:/app # Mount the current directory into the /app directory in the container
+      - /home/ubuntu/ai-tutor-bucket/platform/backend/server/logs:/server/logs
+      #networks:
+      #- myapp-network  # Connect to a custom network
+
+  llm_openai_cloud:
+    build:
+      context: ./backend/llm_openai_cloud # Path to the directory containing the Python app
+      dockerfile: Dockerfile # Specify the Python Dockerfile
+    environment:
+      - mongo_ip=${mongo_ip}
+      - mongo_port=${mongo_port}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "6002:6002" # Map the container's port 6002 to the host's port 6002
+    volumes:
+      - ./backend/llm_openai_cloud:/app # Mount the current directory into the /app directory in the container
+      - /home/ubuntu/ai-tutor-bucket/platform/backend/llm_openai_cloud/logs:/llm_openai_cloud/logs
+      #networks:
+      #- myapp-network  # Connect to a custom network
+
+  stt_openai_cpu_local:
+    build:
+      context: ./backend/stt_openai_cpu_local # Path to the directory containing the Python app
+      dockerfile: Dockerfile # Specify the Python Dockerfile
+    environment:
+      - mongo_ip=${mongo_ip}
+      - mongo_port=${mongo_port}
+    ports:
+      - "5005:5005" # Map the container's port 5005 to the host's port 5005
+    volumes:
+      - ./backend/stt_openai_cpu_local:/app # Mount the current directory into the /app directory in the container
+      - /home/ubuntu/ai-tutor-bucket/data:/data
+      - /home/ubuntu/ai-tutor-bucket/platform/backend/stt_openai_cpu_local/logs:/stt_openai_cpu_local/logs
+      #networks:
+      #- myapp-network  # Connect to a custom network
+
+  stt_openai_gpu_local:
+    build:
+      context: ./backend/stt_openai_gpu_local # Path to the directory containing the Python app
+      dockerfile: Dockerfile # Specify the Python Dockerfile
+    environment:
+      - mongo_ip=${mongo_ip}
+      - mongo_port=${mongo_port}
+    ports:
+      - "5006:5006" # Map the container's port 5006 to the host's port 5006
+    volumes:
+      - ./backend/stt_openai_gpu_local:/app # Mount the current directory into the /app directory in the container
+      - /home/ubuntu/ai-tutor-bucket/data:/data
+      - /home/ubuntu/ai-tutor-bucket/platform/backend/stt_openai_gpu_local/logs:/stt_openai_gpu_local/logs
+      #networks:
+      #- myapp-network  # Connect to a custom network
+
+  rag:
+    build:
+      context: ./backend/rag # Path to the directory containing the Python app
+      dockerfile: Dockerfile # Specify the Python Dockerfile
+    environment:
+      - mongo_ip=${mongo_ip}
+      - mongo_port=${mongo_port}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "7001:7001" # Map the container's port 5006 to the host's port 5006
+    volumes:
+      - ./backend/rag:/app # Mount the current directory into the /app directory in the container
+      - /home/ubuntu/ai-tutor-bucket/platform/archive:/archive
+      - /home/ubuntu/ai-tutor-bucket/data:/data
+      - /home/ubuntu/ai-tutor-bucket/EmbeddingModels:/EmbeddingModels
+      - /home/ubuntu/ai-tutor-bucket/LLMModels:/LLMModels
+      - /home/ubuntu/ai-tutor-bucket/platform/backend/rag/logs:/rag/logs
+      #networks:
+      #- myapp-network  # Connect to a custom network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  
+  project:
+    build:
+      context: ./backend/project
+      dockerfile: Dockerfile
+    environment:
+      - mongo_ip=${mongo_ip}
+      - mongo_port=${mongo_port}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./backend/project:/app 
+      - /home/ubuntu/ai-tutor-bucket/platform/archive:/archive
+      - /home/ubuntu/ai-tutor-bucket/data:/data
+      - /home/ubuntu/ai-tutor-bucket/EmbeddingModels:/EmbeddingModels
+      - /home/ubuntu/ai-tutor-bucket/LLMModels:/LLMModels
+      - /home/ubuntu/ai-tutor-bucket/platform/backend/project/logs:/project/logs
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  frontend:
+    build:
+      context: ./frontend # Path to the directory containing the Node.js UI app
+      dockerfile: Dockerfile # Specify the Node.js Dockerfile
+    environment:
+      - mongo_ip=${mongo_ip}
+      - mongo_port=${mongo_port}
+      - AIServerPort=${AIServerPort}
+      - AIServicesIp=${AIServicesIp}
+    ports:
+      - "3001:3001" # Map the container's port 30001 to the host's port 30001
+    volumes:
+      - ./frontend:/app
+      - /home/ubuntu/ai-tutor-bucket/platform/archive:/archive
+      - /home/ubuntu/ai-tutor-bucket/data/workingDir:/data/workingDir
+      - /home/ubuntu/ai-tutor-bucket/platform/frontend/logs:/frontend/logs
+  
+  mongo:
+    image: mongo:latest
+    container_name: my-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - /home/ubuntu/ai-tutor-db/platform/db/mongo-data:/db/mongo-data
+      - /home/ubuntu/ai-tutor-db/platform/db/mongo-config:/db/mongo-config
+
+  redis:
+    image: redis:6.0.7
+    container_name: redis
+    restart: always
+    volumes:
+      - redis_volume_data:/data
+    ports:
+      - 6379:6379
+  redis_insight:
+    image: redislabs/redisinsight:1.14.0
+    container_name: redis_insight
+    restart: always
+    ports:
+      - 8001:8001
+    volumes:
+      - redis_insight_volume_data:/db
+
+volumes:
+  redis_volume_data:
+  redis_insight_volume_data:

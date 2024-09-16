@@ -1,0 +1,42 @@
+fastapi
+InstructorEmbedding
+langchain==0.0.316
+chromadb==0.3.29
+sentence-transformers==2.2.2
+docx2txt
+unstructured
+unstructured[pdf]
+jq
+openpyxl
+pypdf
+PyYAML==6.0.1
+uvicorn==0.23.2
+Werkzeug==2.3.6
+utils
+slowapi
+pymongo
+cachetools
+logger
+markdown
+xlrd
+
+openai==0.28.1
+
+# Natural Language Processing
+llama-cpp-python==0.1.83
+llama-cpp-python
+pdfminer.six==20221105
+faiss-cpu
+huggingface_hub
+transformers
+autoawq; sys_platform != 'darwin'
+protobuf==3.20.2; sys_platform != 'darwin'
+protobuf==3.20.2; sys_platform == 'darwin' and platform_machine != 'arm64'
+protobuf==3.20.3; sys_platform == 'darwin' and platform_machine == 'arm64'
+auto-gptq==0.6.0; sys_platform != 'darwin'
+
+# Utilities
+urllib3==1.26.6
+accelerate
+bitsandbytes ; sys_platform != 'win32'
+bitsandbytes-windows ; sys_platform == 'win32'

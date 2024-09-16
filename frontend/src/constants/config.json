@@ -1,0 +1,40 @@
+{
+    "LogoSource": "",
+    "LogoAlt": "",
+    "LogoWidth": "",
+    "Login": {
+        "Heading": "AI Private Platform"
+    },
+    "Userhome": {
+        "Heading": "User Homepage"
+    },
+    "AdminHome": {
+        "Heading": "Admin Homepage"
+    },
+    "SuperadminHome": {
+        "Heading": "Superadmin Homepage"
+    },
+    "PasswordReset": {
+        "Heading": "Password Reset"
+    },
+    "UserAccount": {
+        "Heading": "My Account"
+    },
+    "UserRegistration": {
+        "Heading": "User Registration"
+    },
+    "AdminRegistration": {
+        "Heading": "Admin Registration"
+    },
+    "STT": {
+        "Heading": "STT"
+    },
+    "LLM": {
+        "Heading": "LLM"
+    },
+    "RAG": {
+        "Heading": "RAG"
+    },
+    "RAG_API_URL": "http://172.25.1.152:4001",
+    "RAG_Archive": true
+}
